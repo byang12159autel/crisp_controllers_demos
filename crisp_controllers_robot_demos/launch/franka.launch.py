@@ -232,6 +232,12 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
+                arguments=["twist_broadcaster"],
+                output="screen",
+            ),
+            Node(
+                package="controller_manager",
+                executable="spawner",
                 arguments=["pose_broadcaster"],
                 output="screen",
             ),

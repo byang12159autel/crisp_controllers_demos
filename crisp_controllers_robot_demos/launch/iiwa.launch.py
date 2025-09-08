@@ -180,70 +180,78 @@ def generate_launch_description():
     namespace = LaunchConfiguration("namespace")
 
     # Get URDF via xacro
-    robot_description_content = Command([
-        PathJoinSubstitution([FindExecutable(name="xacro")]),
-        " ",
-        PathJoinSubstitution([
-            FindPackageShare("crisp_controllers_robot_demos"),
-            "config",
-            "iiwa",
-            "iiwa.urdf.xacro",
-        ]),
-        " ",
-        "prefix:=",
-        prefix,
-        " ",
-        "use_fake_hardware:=",
-        use_fake_hardware,
-        " ",
-        "robot_ip:=",
-        robot_ip,
-        " ",
-        "robot_port:=",
-        robot_port,
-        " ",
-        "initial_positions_file:=",
-        initial_positions_file,
-        " ",
-        "command_interface:=",
-        command_interface,
-        " ",
-        "base_frame_file:=",
-        base_frame_file,
-        " ",
-        "description_package:=",
-        description_package,
-        " ",
-        "runtime_config_package:=",
-        runtime_config_package,
-        " ",
-        "controllers_file:=",
-        controllers_file,
-        " ",
-        "namespace:=",
-        namespace,
-    ])
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("crisp_controllers_robot_demos"),
+                    "config",
+                    "iiwa",
+                    "iiwa.urdf.xacro",
+                ]
+            ),
+            " ",
+            "prefix:=",
+            prefix,
+            " ",
+            "use_fake_hardware:=",
+            use_fake_hardware,
+            " ",
+            "robot_ip:=",
+            robot_ip,
+            " ",
+            "robot_port:=",
+            robot_port,
+            " ",
+            "initial_positions_file:=",
+            initial_positions_file,
+            " ",
+            "command_interface:=",
+            command_interface,
+            " ",
+            "base_frame_file:=",
+            base_frame_file,
+            " ",
+            "description_package:=",
+            description_package,
+            " ",
+            "runtime_config_package:=",
+            runtime_config_package,
+            " ",
+            "controllers_file:=",
+            controllers_file,
+            " ",
+            "namespace:=",
+            namespace,
+        ]
+    )
 
     robot_description = {"robot_description": robot_description_content}
 
     # Use our controllers
-    robot_controllers = PathJoinSubstitution([
-        FindPackageShare("crisp_controllers_robot_demos"),
-        "config",
-        "iiwa",
-        "controllers.yaml",
-    ])
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("crisp_controllers_robot_demos"),
+            "config",
+            "iiwa",
+            "controllers.yaml",
+        ]
+    )
     # robot_controllers = PathJoinSubstitution([
     #     FindPackageShare(runtime_config_package),
     #     "config",
     #     controllers_file,
     # ])
 
-    rviz_config_file = PathJoinSubstitution([
-        FindPackageShare(description_package),
-        "rviz",
-        "iiwa.rviz",
-    ])
+    rviz_config_file = PathJoinSubstitution(
+        [
+            FindPackageShare(description_package),
+            "rviz",
+            "iiwa.rviz",
+        ]
+    )
 
     control_node = Node(
         package="controller_manager",
@@ -282,7 +290,6 @@ def generate_launch_description():
         ],
     )
 
-
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -314,6 +321,15 @@ def generate_launch_description():
         ],
     )
 
+    twist_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "twist_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+        ],
+    )
 
     nodes = [
         control_node,
@@ -323,6 +339,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         cartesian_impedance_controller_spawner,
         pose_broadcaster_spawner,
+        twist_broadcaster_spawner,
     ]
 
     return LaunchDescription(declared_arguments + nodes)
