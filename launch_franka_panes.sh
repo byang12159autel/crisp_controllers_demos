@@ -1,6 +1,24 @@
 #!/bin/bash
 
 # Configuration
+
+# Detect network interface based on hostname
+# Find your device's network interface via "ip link show" for active network interface. 
+HOSTNAME=$(hostname)
+case "$HOSTNAME" in
+    "laptop1")
+        ROS_NETWORK_INTERFACE="wlo1"
+        ;;
+    "desktop-workstation")
+        ROS_NETWORK_INTERFACE="wlp15s0"
+        ;;
+    *)
+        echo "Warning: Unknown hostname"
+        echo "To configure your interface, add your hostname to this script's case statement"
+        ;;
+esac
+
+echo "Using network interface: $ROS_NETWORK_INTERFACE (hostname: $HOSTNAME)"
 CONTAINER_NAME="crisp_controllers_demos_launch_franka"
 SESSION_NAME="franka_launch"
 
@@ -29,7 +47,7 @@ tmux split-window -h -t "$SESSION_NAME"
 tmux split-window -v -t "$SESSION_NAME:0.1"
 
 # Send command to left pane (pane 0)
-tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=wlp15s0 docker compose up launch_franka" C-m
+tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
 
 # Send command to top-right pane (pane 1) - with delay and ROS environment setup
 tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'; sleep 8; docker exec -it $CONTAINER_NAME bash -c 'source /opt/ros/humble/setup.bash && source install/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp &&
