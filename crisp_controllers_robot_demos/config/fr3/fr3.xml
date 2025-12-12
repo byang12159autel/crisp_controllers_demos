@@ -63,6 +63,10 @@
     <mesh name="link5_coll" file="link5.stl"/>
     <mesh name="link6_coll" file="link6.stl"/>
     <mesh name="link7_coll" file="link7.stl"/>
+    
+    <!-- Charger gun end-effector meshes -->
+    <mesh name="chargergun_fr3_v1_visual" file="chargergun_fr3_v1.stl"/>
+    <mesh name="chargergun_fr3_v1_coll" file="chargergun_fr3_v1.stl"/>
   </asset>
 
   <worldbody>
@@ -132,7 +136,14 @@
                       <geom mesh="link7_2" material="white" class="visual"/>
                       <geom mesh="link7_3" material="black" class="visual"/>
                       <geom name="fr3_link7_collision" class="collision" mesh="link7_coll"/>
-                      <site name="attachment_site" pos="0 0 0.107"/>
+                      
+                      <!-- Fixed end-effector link with charger gun -->
+                      <body name="fr3_eef_link" pos="0 0 0.107" quat="0 1 0 0">
+                        <inertial mass="0.2" pos="0.0 0.0 0.0" diaginertia="0.001 0.001 0.001"/>
+                        <geom mesh="chargergun_fr3_v1_visual" material="gray" class="visual"/>
+                        <geom mesh="chargergun_fr3_v1_coll" class="collision"/>
+                        <site name="attachment_site" pos="0 0 0" size="0.01"/>
+                      </body>
                     </body>
                   </body>
                 </body>
