@@ -99,21 +99,21 @@ x-base: &base
     rttime: -1
     memlock: 8428281856
 
-x-iiwa-overlay: &iiwa-overlay
-  <<: *base
-  image: crisp_controllers_demos:iiwa-overlay
-  build:
-    context: .
-    dockerfile: docker/Dockerfile.robots
-    target: iiwa-overlay
+# x-iiwa-overlay: &iiwa-overlay
+#   <<: *base
+#   image: crisp_controllers_demos:iiwa-overlay
+#   build:
+#     context: .
+#     dockerfile: docker/Dockerfile.robots
+#     target: iiwa-overlay
 
-x-kinova-overlay: &kinova-overlay
-  <<: *base
-  image: crisp_controllers_demos:kinova-overlay
-  build:
-    context: .
-    dockerfile: docker/Dockerfile.robots
-    target: kinova-overlay
+# x-kinova-overlay: &kinova-overlay
+#   <<: *base
+#   image: crisp_controllers_demos:kinova-overlay
+#   build:
+#     context: .
+#     dockerfile: docker/Dockerfile.robots
+#     target: kinova-overlay
 
 x-franka: &franka
   <<: *base
@@ -140,11 +140,11 @@ services:
   franka-overlay:
     <<: *franka-overlay
 
-  iiwa-overlay:
-    <<: *iiwa-overlay
+  # iiwa-overlay:
+  #   <<: *iiwa-overlay
 
-  kinova-overlay:
-    <<: *kinova-overlay
+  # kinova-overlay:
+  #   <<: *kinova-overlay
 
   launch_zenoh_router:
     <<: *base
@@ -159,6 +159,7 @@ services:
 
   launch_franka:
     <<: *franka-overlay
+    container_name: crisp_controllers_demos_launch_franka
     command: >
       bash -lc "source /opt/ros/humble/setup.bash &&
       source install/setup.bash &&
@@ -167,34 +168,34 @@ services:
       ros2 launch crisp_controllers_robot_demos franka.launch.py
       arm_id:=fr3 use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false} robot_ip:=${ROBOT_IP:-172.16.0.2} use_rviz:=True"
 
-  launch_dual_franka:
-    <<: *franka-overlay
-    command: >
-      bash -lc "source /opt/ros/humble/setup.bash &&
-      source install/setup.bash &&
-      export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
-      RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-      ros2 launch crisp_controllers_robot_demos dual_franka.launch.py
-      use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false}
-      left_robot_ip:=${LEFT_ROBOT_IP:-172.16.1.2} right_robot_ip:=${RIGHT_ROBOT_IP:-172.16.0.2}"
+  # launch_dual_franka:
+  #   <<: *franka-overlay
+  #   command: >
+  #     bash -lc "source /opt/ros/humble/setup.bash &&
+  #     source install/setup.bash &&
+  #     export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
+  #     RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
+  #     ros2 launch crisp_controllers_robot_demos dual_franka.launch.py
+  #     use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false}
+  #     left_robot_ip:=${LEFT_ROBOT_IP:-172.16.1.2} right_robot_ip:=${RIGHT_ROBOT_IP:-172.16.0.2}"
 
-  launch_kinova:
-    <<: *kinova-overlay
-    command: >
-      bash -c "source /opt/ros/humble/setup.bash &&
-      source install/setup.bash &&
-      export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
-      RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-      ros2 launch crisp_controllers_robot_demos kinova_gen3.launch.py"
+  # launch_kinova:
+  #   <<: *kinova-overlay
+  #   command: >
+  #     bash -c "source /opt/ros/humble/setup.bash &&
+  #     source install/setup.bash &&
+  #     export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
+  #     RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
+  #     ros2 launch crisp_controllers_robot_demos kinova_gen3.launch.py"
 
-  launch_iiwa:
-    <<: *iiwa-overlay
-    command: >
-      bash -c "source /opt/ros/humble/setup.bash &&
-      source install/setup.bash &&
-      export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
-      RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-      ros2 launch crisp_controllers_robot_demos iiwa.launch.py"
+  # launch_iiwa:
+  #   <<: *iiwa-overlay
+  #   command: >
+  #     bash -c "source /opt/ros/humble/setup.bash &&
+  #     source install/setup.bash &&
+  #     export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
+  #     RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
+  #     ros2 launch crisp_controllers_robot_demos iiwa.launch.py"
 
   # -- Camera related services: --
   launch_realsense:
