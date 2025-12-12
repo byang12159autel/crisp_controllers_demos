@@ -9,7 +9,7 @@ case "$HOSTNAME" in
     "laptop1")
         ROS_NETWORK_INTERFACE="wlo1"
         ;;
-    "desktop-workstation")
+    "autel-ben-sim")
         ROS_NETWORK_INTERFACE="wlp15s0"
         ;;
     *)
