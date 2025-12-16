@@ -198,7 +198,7 @@ def generate_launch_description():
                     {
                         "source_list": [
                             "franka/joint_states",
-                            "franka_gripper/joint_states",
+                            # "franka_gripper/joint_states",
                         ],
                         "rate": 1000,
                     }
@@ -259,24 +259,24 @@ def generate_launch_description():
                 arguments=["gravity_compensation", "--inactive"],
                 output="screen",
             ),
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    [
-                        PathJoinSubstitution(
-                            [
-                                FindPackageShare("franka_gripper"),
-                                "launch",
-                                "gripper.launch.py",
-                            ]
-                        )
-                    ]
-                ),
-                launch_arguments={
-                    robot_ip_parameter_name: robot_ip,
-                    use_fake_hardware_parameter_name: use_fake_hardware,
-                }.items(),
-                condition=IfCondition(load_gripper),
-            ),
+            # IncludeLaunchDescription(
+            #     PythonLaunchDescriptionSource(
+            #         [
+            #             PathJoinSubstitution(
+            #                 [
+            #                     FindPackageShare("franka_gripper"),
+            #                     "launch",
+            #                     "gripper.launch.py",
+            #                 ]
+            #             )
+            #         ]
+            #     ),
+            #     launch_arguments={
+            #         robot_ip_parameter_name: robot_ip,
+            #         use_fake_hardware_parameter_name: use_fake_hardware,
+            #     }.items(),
+            #     condition=IfCondition(load_gripper),
+            # ),
             Node(
                 package="rviz2",
                 executable="rviz2",
