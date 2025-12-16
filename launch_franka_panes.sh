@@ -47,7 +47,11 @@ tmux split-window -h -t "$SESSION_NAME"
 tmux split-window -v -t "$SESSION_NAME:0.1"
 
 # Send command to left pane (pane 0)
-tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+# Sim Version
+# tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+# tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+# Hardware Version
+tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
 
 # Send command to top-right pane (pane 1) - with delay and ROS environment setup
 tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'; sleep 8; docker exec -it $CONTAINER_NAME bash -c 'source /opt/ros/humble/setup.bash && source install/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp &&
@@ -55,10 +59,10 @@ export ROS_DOMAIN_ID=100 && exec bash' || bash" C-m
 
 # Send commands to bottom-right pane (pane 2) - crisp_py environment
 tmux send-keys -t "$SESSION_NAME:0.2" "cd ~/crisp_py" C-m
-tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon stop" C-m
-tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon start" C-m
+# tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon stop" C-m
+# tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon start" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "pixi shell -e humble" C-m
-tmux send-keys -t "$SESSION_NAME:0.2" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
+# tmux send-keys -t "$SESSION_NAME:0.2" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "export ROS_DOMAIN_ID=100" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "ros2 topic list" C-m
 
