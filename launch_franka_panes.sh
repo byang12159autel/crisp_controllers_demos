@@ -30,6 +30,7 @@ echo "Using network interface: $ROS_NETWORK_INTERFACE (hostname: $HOSTNAME)"
 ROBOT_IP="192.168.1.7"
 CONTAINER_NAME="crisp_controllers_demos_launch_franka"
 SESSION_NAME="franka_launch"
+ROS_DOMAIN_ID=100
 
 # ======================================================================
 # Cleanup
@@ -73,9 +74,14 @@ else
     tmux send-keys -t "$SESSION_NAME:0.0" "$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
 fi
 
-# Send command to top-right pane (pane 1) - with delay and ROS environment setup
-tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'; sleep 8; docker exec -it $CONTAINER_NAME bash -c 'source /opt/ros/humble/setup.bash && source install/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp &&
-export ROS_DOMAIN_ID=100 && exec bash' || bash" C-m
+# Send commands to top-right pane (pane 1) - with delay and ROS environment setup
+tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "sleep 8" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "docker exec -it $CONTAINER_NAME bash" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "source /opt/ros/humble/setup.bash" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "source install/setup.bash" C-m
+# tmux send-keys -t "$SESSION_NAME:0.1" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
 
 # Send commands to bottom-right pane (pane 2) - crisp_py environment
 tmux send-keys -t "$SESSION_NAME:0.2" "cd ~/crisp_py" C-m
@@ -83,7 +89,7 @@ tmux send-keys -t "$SESSION_NAME:0.2" "cd ~/crisp_py" C-m
 # tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon start" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "pixi shell -e humble" C-m
 # tmux send-keys -t "$SESSION_NAME:0.2" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
-tmux send-keys -t "$SESSION_NAME:0.2" "export ROS_DOMAIN_ID=100" C-m
+tmux send-keys -t "$SESSION_NAME:0.2" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "ros2 topic list" C-m
 
 # Attach to the session
