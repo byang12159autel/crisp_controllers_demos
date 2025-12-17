@@ -67,11 +67,11 @@ tmux split-window -v -t "$SESSION_NAME:0.1"
 if [ "$USE_SIM" = "sim" ]; then
     # Sim Version
     echo "Launching in SIMULATION mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "$ROBOT_IP FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
 else
     # Hardware Version
     echo "Launching in HARDWARE mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
 fi
 
 # Send commands to top-right pane (pane 1) - with delay and ROS environment setup
