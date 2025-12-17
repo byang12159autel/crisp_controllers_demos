@@ -1,9 +1,13 @@
 #!/bin/bash
 
-#Read Input
+# ======================================================================
+# Read User Input
+# ======================================================================
 USE_SIM=$1
 
+# ======================================================================
 # Configuration
+# ======================================================================
 
 # Detect network interface based on hostname
 # Find your device's network interface via "ip link show" for active network interface. 
@@ -22,10 +26,14 @@ case "$HOSTNAME" in
 esac
 
 echo "Using network interface: $ROS_NETWORK_INTERFACE (hostname: $HOSTNAME)"
+
+ROBOT_IP="192.168.1.7"
 CONTAINER_NAME="crisp_controllers_demos_launch_franka"
 SESSION_NAME="franka_launch"
 
-# Cleanup function
+# ======================================================================
+# Cleanup
+# ======================================================================
 cleanup() {
     echo "Cleaning up docker containers..."
     docker compose down
@@ -39,6 +47,10 @@ docker compose down
 
 # Kill existing session if it exists
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null
+
+# ======================================================================
+# Startup
+# ======================================================================
 
 # Create a new tmux session (detached)
 tmux new-session -d -s "$SESSION_NAME"
@@ -54,11 +66,11 @@ tmux split-window -v -t "$SESSION_NAME:0.1"
 if [ "$USE_SIM" = "sim" ]; then
     # Sim Version
     echo "Launching in SIMULATION mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "$ROBOT_IP FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
 else
     # Hardware Version
     echo "Launching in HARDWARE mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
 fi
 
 # Send command to top-right pane (pane 1) - with delay and ROS environment setup
