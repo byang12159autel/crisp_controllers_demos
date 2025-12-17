@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Read Input
+USE_SIM=$1
+
 # Configuration
 
 # Detect network interface based on hostname
@@ -47,11 +50,16 @@ tmux split-window -h -t "$SESSION_NAME"
 tmux split-window -v -t "$SESSION_NAME:0.1"
 
 # Send command to left pane (pane 0)
-# Sim Version
-# tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
-# tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
-# Hardware Version
-tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+# Launch appropriate version based on USE_SIM
+if [ "$USE_SIM" = "sim" ]; then
+    # Sim Version
+    echo "Launching in SIMULATION mode..."
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+else
+    # Hardware Version
+    echo "Launching in HARDWARE mode..."
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=192.168.1.7 FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+fi
 
 # Send command to top-right pane (pane 1) - with delay and ROS environment setup
 tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'; sleep 8; docker exec -it $CONTAINER_NAME bash -c 'source /opt/ros/humble/setup.bash && source install/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp &&
