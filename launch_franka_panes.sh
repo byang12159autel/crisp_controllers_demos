@@ -85,8 +85,6 @@ tmux send-keys -t "$SESSION_NAME:0.1" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
 
 # Send commands to bottom-right pane (pane 2) - crisp_py environment
 tmux send-keys -t "$SESSION_NAME:0.2" "cd ~/crisp_py" C-m
-# tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon stop" C-m
-# tmux send-keys -t "$SESSION_NAME:0.2" "ros2 daemon start" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "pixi shell -e humble" C-m
 # tmux send-keys -t "$SESSION_NAME:0.2" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
 tmux send-keys -t "$SESSION_NAME:0.2" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
