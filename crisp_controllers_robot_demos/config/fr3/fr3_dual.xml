@@ -64,7 +64,7 @@
     <mesh name="link6_coll" file="link6.stl"/>
     <mesh name="link7_coll" file="link7.stl"/>
     
-    <mesh name="duo_base.stl" file="Duo_Franka_Base.stl"/>
+    <mesh name="duo_base.stl" file="body/Duo_Franka_Base.stl"/>
   </asset>
 
   <worldbody>
