@@ -10,6 +10,7 @@ from launch.actions import (
     LogInfo,
     OpaqueFunction,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node, PushRosNamespace
@@ -24,6 +25,7 @@ def generate_launch_description():
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     left_robot_ip = LaunchConfiguration("left_robot_ip")
     right_robot_ip = LaunchConfiguration("right_robot_ip")
+    use_rviz = LaunchConfiguration("use_rviz")
 
     launch_arguments = [
         DeclareLaunchArgument(
@@ -40,6 +42,11 @@ def generate_launch_description():
             "right_robot_ip",
             default_value="172.16.0.2",
             description="IP adress of the right robot",
+        ),
+        DeclareLaunchArgument(
+            "use_rviz",
+            default_value="true",
+            description="Visualize the robots in Rviz",
         ),
     ]
 
@@ -101,6 +108,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         arguments=["--display-config", rviz_file],
+        condition=IfCondition(use_rviz),
     )
 
     robot_state_publisher = Node(
