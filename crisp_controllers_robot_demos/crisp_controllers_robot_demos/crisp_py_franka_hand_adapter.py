@@ -148,8 +148,21 @@ class CrispPyGripperAdapater(Node):
 
         self.joint_state_freq = 50
 
-        self.gripper_client = GripperClient(self, gripper_namespace="franka_gripper")
-        self.gripper_client.wait_until_ready()
+        self.declare_parameter("gripper_namespace", "franka_gripper")
+        self.declare_parameter("wait_timeout_sec", 10.0)
+        gripper_namespace = (
+            self.get_parameter("gripper_namespace")
+            .get_parameter_value()
+            .string_value
+        )
+        wait_timeout_sec = (
+            self.get_parameter("wait_timeout_sec").get_parameter_value().double_value
+        )
+
+        self.gripper_client = GripperClient(
+            self, gripper_namespace=gripper_namespace
+        )
+        self.gripper_client.wait_until_ready(timeout_sec=wait_timeout_sec)
 
         self.gripper_client.open()
         self.is_closing = False

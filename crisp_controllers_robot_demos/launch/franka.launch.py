@@ -259,24 +259,24 @@ def generate_launch_description():
                 arguments=["gravity_compensation", "--inactive"],
                 output="screen",
             ),
-            # IncludeLaunchDescription(
-            #     PythonLaunchDescriptionSource(
-            #         [
-            #             PathJoinSubstitution(
-            #                 [
-            #                     FindPackageShare("franka_gripper"),
-            #                     "launch",
-            #                     "gripper.launch.py",
-            #                 ]
-            #             )
-            #         ]
-            #     ),
-            #     launch_arguments={
-            #         robot_ip_parameter_name: robot_ip,
-            #         use_fake_hardware_parameter_name: use_fake_hardware,
-            #     }.items(),
-            #     condition=IfCondition(load_gripper),
-            # ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    [
+                        PathJoinSubstitution(
+                            [
+                                FindPackageShare("franka_gripper"),
+                                "launch",
+                                "gripper.launch.py",
+                            ]
+                        )
+                    ]
+                ),
+                launch_arguments={
+                    robot_ip_parameter_name: robot_ip,
+                    use_fake_hardware_parameter_name: use_fake_hardware,
+                }.items(),
+                condition=IfCondition(load_gripper),
+            ),
             Node(
                 package="rviz2",
                 executable="rviz2",
@@ -289,6 +289,15 @@ def generate_launch_description():
                 executable="crisp_py_franka_hand_adapter",
                 name="crisp_py_franka_hand_adapter",
                 output="screen",
+                parameters=[
+                    {
+                        "gripper_namespace": PathJoinSubstitution(
+                            [arm_prefix, "franka_gripper"]
+                        )
+                    },
+                    {"wait_timeout_sec": 15.0},
+                ],
+                condition=IfCondition(load_gripper),
             ),
         ]
     )
