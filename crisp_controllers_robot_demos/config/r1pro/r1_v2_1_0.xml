@@ -178,4 +178,33 @@
       </body>
     </body>
   </worldbody>
+
+  <actuator>
+    <motor name="steer_motor_joint1_motor" gear="1" joint="steer_motor_joint1" ctrlrange="-44 44"/>
+    <motor name="wheel_motor_joint1_motor" gear="1" joint="wheel_motor_joint1" ctrlrange="-100 100"/>
+    <motor name="steer_motor_joint2_motor" gear="1" joint="steer_motor_joint2" ctrlrange="-44 44"/>
+    <motor name="wheel_motor_joint2_motor" gear="1" joint="wheel_motor_joint2" ctrlrange="-100 100"/>
+    <motor name="steer_motor_joint3_motor" gear="1" joint="steer_motor_joint3" ctrlrange="-44 44"/>
+    <motor name="wheel_motor_joint3_motor" gear="1" joint="wheel_motor_joint3" ctrlrange="-100 100"/>
+    <motor name="torso_joint1_motor" gear="1" joint="torso_joint1" ctrlrange="-100 100"/>
+    <motor name="torso_joint2_motor" gear="1" joint="torso_joint2" ctrlrange="-100 100"/>
+    <motor name="torso_joint3_motor" gear="1" joint="torso_joint3" ctrlrange="-100 100"/>
+    <motor name="torso_joint4_motor" gear="1" joint="torso_joint4" ctrlrange="-100 100"/>
+    <motor name="left_arm_joint1_motor" gear="1" joint="left_arm_joint1" ctrlrange="-40 40"/>
+    <motor name="left_arm_joint2_motor" gear="1" joint="left_arm_joint2" ctrlrange="-40 40"/>
+    <motor name="left_arm_joint3_motor" gear="1" joint="left_arm_joint3" ctrlrange="-27 27"/>
+    <motor name="left_arm_joint4_motor" gear="1" joint="left_arm_joint4" ctrlrange="-7 7"/>
+    <motor name="left_arm_joint5_motor" gear="1" joint="left_arm_joint5" ctrlrange="-7 7"/>
+    <motor name="left_arm_joint6_motor" gear="1" joint="left_arm_joint6" ctrlrange="-7 7"/>
+    <motor name="left_gripper_finger_joint1_motor" gear="1" joint="left_gripper_finger_joint1" ctrlrange="-100 100"/>
+    <motor name="left_gripper_finger_joint2_motor" gear="1" joint="left_gripper_finger_joint2" ctrlrange="-100 100"/>
+    <motor name="right_arm_joint1_motor" gear="1" joint="right_arm_joint1" ctrlrange="-40 40"/>
+    <motor name="right_arm_joint2_motor" gear="1" joint="right_arm_joint2" ctrlrange="-40 40"/>
+    <motor name="right_arm_joint3_motor" gear="1" joint="right_arm_joint3" ctrlrange="-27 27"/>
+    <motor name="right_arm_joint4_motor" gear="1" joint="right_arm_joint4" ctrlrange="-7 7"/>
+    <motor name="right_arm_joint5_motor" gear="1" joint="right_arm_joint5" ctrlrange="-7 7"/>
+    <motor name="right_arm_joint6_motor" gear="1" joint="right_arm_joint6" ctrlrange="-7 7"/>
+    <motor name="right_gripper_finger_joint1_motor" gear="1" joint="right_gripper_finger_joint1" ctrlrange="-100 100"/>
+    <motor name="right_gripper_finger_joint2_motor" gear="1" joint="right_gripper_finger_joint2" ctrlrange="-100 100"/>
+  </actuator>
 </mujoco>
