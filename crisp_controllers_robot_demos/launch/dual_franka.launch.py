@@ -26,6 +26,7 @@ def generate_launch_description():
     left_robot_ip = LaunchConfiguration("left_robot_ip")
     right_robot_ip = LaunchConfiguration("right_robot_ip")
     use_rviz = LaunchConfiguration("use_rviz")
+    enable_mujoco_gui = LaunchConfiguration("enable_mujoco_gui")
 
     launch_arguments = [
         DeclareLaunchArgument(
@@ -47,6 +48,11 @@ def generate_launch_description():
             "use_rviz",
             default_value="true",
             description="Visualize the robots in Rviz",
+        ),
+        DeclareLaunchArgument(
+            "enable_mujoco_gui",
+            default_value="false",
+            description="Enable the MuJoCo render window",
         ),
     ]
 
@@ -81,6 +87,7 @@ def generate_launch_description():
             "use_rviz": "false",
             "use_fake_hardware": use_fake_hardware,
             "start_robot_state_publisher": "true",
+            "enable_mujoco_gui": enable_mujoco_gui,
         }.items(),
     )
 
@@ -99,6 +106,7 @@ def generate_launch_description():
             "use_rviz": "false",
             "use_fake_hardware": use_fake_hardware,
             "start_robot_state_publisher": "true",
+            "enable_mujoco_gui": enable_mujoco_gui,
         }.items(),
     )
 

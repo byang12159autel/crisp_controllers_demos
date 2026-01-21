@@ -23,6 +23,8 @@
   <!-- Should a fake hardware be used? -->
   <xacro:arg name="use_fake_hardware" default="false" />
 
+  <xacro:arg name="enable_mujoco_gui" default="false" />
+
   <!-- Should fake sensors be used? -->
   <xacro:arg name="fake_sensor_commands" default="false" />
 
@@ -44,9 +46,9 @@
     arm_id="fr3"
     robot_ip="$(arg robot_ip)"
     use_fake_hardware="$(arg use_fake_hardware)"
+    enable_mujoco_gui="$(arg enable_mujoco_gui)"
     arm_prefix="$(arg arm_prefix)"
     hand="$(arg load_gripper)"
   />
 
 </robot>
-

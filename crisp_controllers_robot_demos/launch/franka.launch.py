@@ -40,6 +40,7 @@ def robot_description_dependent_nodes_spawner(
     load_gripper,
     arm_prefix,
     start_robot_state_publisher,
+    enable_mujoco_gui,
 ):
     robot_ip_str = context.perform_substitution(robot_ip)
     arm_id_str = context.perform_substitution(arm_id)
@@ -47,6 +48,7 @@ def robot_description_dependent_nodes_spawner(
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
     fake_sensor_commands_str = context.perform_substitution(fake_sensor_commands)
     load_gripper_str = context.perform_substitution(load_gripper)
+    enable_mujoco_gui_str = context.perform_substitution(enable_mujoco_gui)
 
     franka_xacro_filepath = os.path.join(
         get_package_share_directory("crisp_controllers_robot_demos"),
@@ -69,6 +71,7 @@ def robot_description_dependent_nodes_spawner(
                 "fr3",
                 "scene.xml",
             ),
+            "enable_mujoco_gui": enable_mujoco_gui_str,
         },
     ).toprettyxml(indent="  ")
 
@@ -118,6 +121,7 @@ def generate_launch_description():
     fake_sensor_commands_parameter_name = "fake_sensor_commands"
     use_rviz_parameter_name = "use_rviz"
     start_robot_state_publisher_name = "start_robot_state_publisher"
+    enable_mujoco_gui_parameter_name = "enable_mujoco_gui"
 
     arm_id = LaunchConfiguration(arm_id_parameter_name)
     arm_prefix = LaunchConfiguration(arm_prefix_parameter_name)
@@ -127,6 +131,7 @@ def generate_launch_description():
     fake_sensor_commands = LaunchConfiguration(fake_sensor_commands_parameter_name)
     use_rviz = LaunchConfiguration(use_rviz_parameter_name)
     start_robot_state_publisher = LaunchConfiguration(start_robot_state_publisher_name)
+    enable_mujoco_gui = LaunchConfiguration(enable_mujoco_gui_parameter_name)
 
     rviz_file = os.path.join(
         get_package_share_directory("franka_description"),
@@ -144,6 +149,7 @@ def generate_launch_description():
             load_gripper,
             arm_prefix,
             start_robot_state_publisher,
+            enable_mujoco_gui,
         ],
     )
 
@@ -189,6 +195,11 @@ def generate_launch_description():
                 start_robot_state_publisher_name,
                 default_value="true",
                 description="",
+            ),
+            DeclareLaunchArgument(
+                enable_mujoco_gui_parameter_name,
+                default_value="false",
+                description="Enable the MuJoCo render window",
             ),
             Node(
                 package="joint_state_publisher",

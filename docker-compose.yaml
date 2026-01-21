@@ -178,6 +178,7 @@ services:
       ros2 launch crisp_controllers_robot_demos dual_franka.launch.py
       use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false}
       use_rviz:=${DUAL_FRANKA_USE_RVIZ:-true}
+      enable_mujoco_gui:=${DUAL_FRANKA_ENABLE_MUJOCO_GUI:-false}
       left_robot_ip:=${LEFT_ROBOT_IP:-172.16.1.2} right_robot_ip:=${RIGHT_ROBOT_IP:-172.16.0.2}"
 
   # launch_kinova:

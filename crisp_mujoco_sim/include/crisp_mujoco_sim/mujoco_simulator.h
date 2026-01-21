@@ -53,8 +53,8 @@ public:
   void controlCBImplTorque(const mjModel * m, mjData * d);
 
   // Call this in a separate thread
-  static int simulate(const std::string & model_xml);
-  int simulateImpl(const std::string & model_xml);
+  static int simulate(const std::string & model_xml, bool enable_gui);
+  int simulateImpl(const std::string & model_xml, bool enable_gui);
 
   // Non-blocking
   void read(std::vector<double> & pos, std::vector<double> & vel, std::vector<double> & eff);
