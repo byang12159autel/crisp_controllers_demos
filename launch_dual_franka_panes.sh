@@ -63,6 +63,10 @@ tmux split-window -h -t "$SESSION_NAME"
 # Split the right pane horizontally (top and bottom)
 tmux split-window -v -t "$SESSION_NAME:0.1"
 
+# Enable logging for pane 0 (docker compose output)
+PANE0_LOG="/home/ben/crisp_framework/crisp_controllers_demos/pane0_$(date +%Y%m%d_%H%M%S).log"
+echo "Logging pane 0 output to: $PANE0_LOG"
+
 # Send command to left pane (pane 0)
 # Launch appropriate version based on USE_SIM
 if [ "$USE_SIM" = "sim" ]; then
@@ -70,15 +74,15 @@ if [ "$USE_SIM" = "sim" ]; then
     echo "Launching in SIMULATION mode..."
     if [ "$DISABLE_RVIZ" = "no_rviz" ]; then
         echo "Disabling RViz for dual franka launch..."
-        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 DUAL_FRANKA_USE_RVIZ=false FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka" C-m
+        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 DUAL_FRANKA_USE_RVIZ=false FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka 2>&1 | tee -a $PANE0_LOG" C-m
     else
-        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka" C-m
+        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka 2>&1 | tee -a $PANE0_LOG" C-m
     fi
 
 else
     # Hardware Version
     echo "Launching in HARDWARE mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka 2>&1 | tee -a $PANE0_LOG" C-m
 fi
 
 # Send commands to top-right pane (pane 1) - with delay and ROS environment setup
