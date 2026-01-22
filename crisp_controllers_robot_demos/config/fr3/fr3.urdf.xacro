@@ -8,7 +8,6 @@
          params="arm_id
              robot_ip
              use_fake_hardware
-             enable_mujoco_gui:=false
              arm_prefix:=''
              hand:=true
              ee_id:='franka_hand'
@@ -43,7 +42,6 @@
   <xacro:franka_arm_ros2_control arm_id="fr3"
             robot_ip="${robot_ip}"
             use_fake_hardware="$(arg use_fake_hardware)"
-            enable_mujoco_gui="${enable_mujoco_gui}"
             arm_prefix="${arm_prefix}"/>
 
 

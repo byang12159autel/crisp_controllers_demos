@@ -13,7 +13,6 @@
          params="arm_id
              robot_ip
              use_fake_hardware
-             enable_mujoco_gui
              arm_prefix:=''">
     <xacro:property name="arm_prefix_modified" value="${'' if arm_prefix == '' else arm_prefix + '_'}" />
 
@@ -30,7 +29,6 @@
           <xacro:if value="${use_fake_hardware}">
             <plugin>crisp_mujoco_sim/Simulator</plugin>
             <param name="mujoco_model">$(find crisp_controllers_robot_demos)/config/fr3/scene.xml</param>
-            <param name="enable_gui">${enable_mujoco_gui}</param>
           </xacro:if>
         </hardware>
 

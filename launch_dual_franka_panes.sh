@@ -70,7 +70,7 @@ if [ "$USE_SIM" = "sim" ]; then
     echo "Launching in SIMULATION mode..."
     if [ "$DISABLE_RVIZ" = "no_rviz" ]; then
         echo "Disabling RViz for dual franka launch..."
-        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 DUAL_FRANKA_USE_RVIZ=false DUAL_FRANKA_ENABLE_MUJOCO_GUI=true FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka" C-m
+        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 DUAL_FRANKA_USE_RVIZ=false FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka" C-m
     else
         tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka" C-m
     fi
