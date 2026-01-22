@@ -52,7 +52,6 @@ private:
 
   // Parameters
   std::string m_mujoco_model;
-  bool m_enable_gui{false};
 };
 
 }  // namespace crisp_mujoco_sim

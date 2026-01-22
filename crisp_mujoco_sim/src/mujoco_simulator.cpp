@@ -4,8 +4,6 @@
 #include <iostream>
 #include <memory>
 #include <ostream>
-
-#include <GLFW/glfw3.h>
 #include <rclcpp/duration.hpp>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
@@ -31,12 +29,12 @@ void MuJoCoSimulator::controlCBImplTorque([[maybe_unused]] const mjModel * m, mj
   command_mutex.unlock();
 }
 
-int MuJoCoSimulator::simulate(const std::string & model_xml, bool enable_gui)
+int MuJoCoSimulator::simulate(const std::string & model_xml)
 {
-  return getInstance().simulateImpl(model_xml, enable_gui);
+  return getInstance().simulateImpl(model_xml);
 }
 
-int MuJoCoSimulator::simulateImpl(const std::string & model_xml, bool enable_gui)
+int MuJoCoSimulator::simulateImpl(const std::string & model_xml)
 {
   // Make sure that the ROS2-control system_interface only gets valid data in read().
   // We lock until we are done with simulation setup.
@@ -80,92 +78,7 @@ int MuJoCoSimulator::simulateImpl(const std::string & model_xml, bool enable_gui
 
   auto starting_time = clock->now();
 
-  if (enable_gui)
-  {
-    if (!glfwInit())
-    {
-      RCLCPP_ERROR(logger, "Failed to initialize GLFW. Disable enable_gui to run headless.");
-      return 1;
-    }
-
-    GLFWwindow * window = glfwCreateWindow(1200, 900, "MuJoCo", nullptr, nullptr);
-    if (!window)
-    {
-      RCLCPP_ERROR(logger, "Failed to create GLFW window. Disable enable_gui to run headless.");
-      glfwTerminate();
-      return 1;
-    }
-
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-
-    mjvCamera cam;
-    mjvOption opt;
-    mjvScene scn;
-    mjrContext con;
-
-    mjv_defaultCamera(&cam);
-    mjv_defaultOption(&opt);
-    mjv_defaultScene(&scn);
-    mjr_defaultContext(&con);
-
-    mjv_makeScene(m, &scn, 2000);
-    mjr_makeContext(m, &con, mjFONTSCALE_150);
-
-    cam.lookat[0] = m->stat.center[0];
-    cam.lookat[1] = m->stat.center[1];
-    cam.lookat[2] = m->stat.center[2];
-    cam.distance = 2.5 * m->stat.extent;
-    cam.azimuth = 90.0;
-    cam.elevation = -30.0;
-
-    // Simulate with on-screen rendering
-    while (!glfwWindowShouldClose(window))
-    {
-      mj_step1(m, d);
-
-      // Provide fresh data for ROS2-control
-      state_mutex.lock();
-      syncStates();
-      RCLCPP_DEBUG_STREAM_THROTTLE(logger, *clock, 1000, "Control: " << d->ctrl[0] << ", " << d->ctrl[1] << ", " << d->ctrl[2] << ", " << d->ctrl[3] << ", " << d->ctrl[4] << ", " << d->ctrl[5] << ", " << d->ctrl[6]);
-      if (std::any_of(eff_cmd.begin(), eff_cmd.end(), [](double value) { return value > 0.0; }))
-      {
-        RCLCPP_DEBUG_STREAM_THROTTLE(logger, *clock, 1000, "Command: " << eff_cmd[0] << ", " << eff_cmd[1] << ", " << eff_cmd[2] << ", " << eff_cmd[3] << ", " << eff_cmd[4] << ", " << eff_cmd[5] << ", " << eff_cmd[6]);
-      }
-
-      RCLCPP_DEBUG_STREAM_THROTTLE(logger, *clock, 1000, "State: " << d->qpos[0] << ", " << d->qpos[1] << ", " << d->qpos[2] << ", " << d->qpos[3] << ", " << d->qpos[4] << ", " << d->qpos[5] << ", " << d->qpos[6]);
-
-      state_mutex.unlock();
-
-      // Sync time
-      while (clock->now() < starting_time + rclcpp::Duration::from_seconds(d->time))
-      {
-        rclcpp::sleep_for(100 * rclcpp::nanoseconds(1));
-      }
-
-      RCLCPP_DEBUG_STREAM_THROTTLE(logger, *clock, 1000, "Time: " << d->time);
-
-      mj_step2(m, d);
-
-      mjv_updateScene(m, d, &opt, nullptr, &cam, mjCAT_ALL, &scn);
-
-      mjrRect viewport = {0, 0, 0, 0};
-      glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
-      mjr_render(viewport, &scn, &con);
-
-      glfwSwapBuffers(window);
-      glfwPollEvents();
-    }
-
-    mjr_freeContext(&con);
-    mjv_freeScene(&scn);
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    return 0;
-  }
-
-  // Simulate in realtime (headless)
+  // Simulate in realtime
   while (true)
   {
     mj_step1(m, d);

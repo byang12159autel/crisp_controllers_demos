@@ -42,13 +42,7 @@ Simulator::CallbackReturn Simulator::on_init(const hardware_interface::HardwareI
   // Let the thread's destructor clean-up all resources
   // once users close the simulation window.
   m_mujoco_model = info_.hardware_parameters["mujoco_model"];
-  auto enable_gui_it = info_.hardware_parameters.find("enable_gui");
-  if (enable_gui_it != info_.hardware_parameters.end())
-  {
-    m_enable_gui = (enable_gui_it->second == "true" || enable_gui_it->second == "1");
-  }
-
-  m_simulation = std::thread(MuJoCoSimulator::simulate, m_mujoco_model, m_enable_gui);
+  m_simulation = std::thread(MuJoCoSimulator::simulate, m_mujoco_model);
   m_simulation.detach();
 
   m_positions.resize(info_.joints.size(), 0.0);
