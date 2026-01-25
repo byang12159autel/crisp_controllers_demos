@@ -118,9 +118,12 @@ void MuJoCoSimulator::read(std::vector<double> & pos, std::vector<double> & vel,
 {
   if (state_mutex.try_lock())
   {
-    pos = pos_state;
-    vel = vel_state;
-    eff = eff_state;
+    for (size_t i = 0; i < pos.size(); ++i)
+    {
+      if (i < pos_state.size()) pos[i] = pos_state[i];
+      if (i < vel_state.size()) vel[i] = vel_state[i];
+      if (i < eff_state.size()) eff[i] = eff_state[i];
+    }
     state_mutex.unlock();
   }
 }
