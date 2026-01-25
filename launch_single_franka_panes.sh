@@ -15,11 +15,18 @@ DISABLE_RVIZ=$2
 HOSTNAME=$(hostname)
 case "$HOSTNAME" in
     "laptop1")
+        # Thunderbolt laptop 
         ROS_NETWORK_INTERFACE="wlo1"
         ;;
     "autel-ben-sim")
+        # Workstation
         ROS_NETWORK_INTERFACE="wlp15s0"
         ;;
+    "autel3")
+        # Legion laptop
+        ROS_NETWORK_INTERFACE="wlp130s0f0"
+        ;;
+        
     *)
         echo "Warning: Unknown hostname"
         echo "To configure your interface, add your hostname to this script's case statement"
