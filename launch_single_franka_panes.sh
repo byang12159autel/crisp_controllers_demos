@@ -4,6 +4,7 @@
 # Read User Input
 # ======================================================================
 USE_SIM=$1
+DISABLE_RVIZ=$2
 
 # ======================================================================
 # Configuration
@@ -14,10 +15,16 @@ USE_SIM=$1
 HOSTNAME=$(hostname)
 case "$HOSTNAME" in
     "laptop1")
+        # Thunderbolt laptop 
         ROS_NETWORK_INTERFACE="wlo1"
         ;;
     "autel-ben-sim")
+        # Workstation
         ROS_NETWORK_INTERFACE="wlp15s0"
+        ;;
+    "autel3")
+        # Legion laptop
+        ROS_NETWORK_INTERFACE="wlp130s0f0"wlp130s0f0
         ;;
     *)
         echo "Warning: Unknown hostname"
@@ -68,6 +75,7 @@ if [ "$USE_SIM" = "sim" ]; then
     # Sim Version
     echo "Launching in SIMULATION mode..."
     tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
+
 else
     # Hardware Version
     echo "Launching in HARDWARE mode..."
@@ -93,28 +101,28 @@ tmux send-keys -t "$SESSION_NAME:0.2" "ros2 topic list" C-m
 # Attach to the session
 tmux attach-session -t "$SESSION_NAME"
 
-# ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "
-# joint_names:
-# - fr3_joint1
-# - fr3_joint2
-# - fr3_joint3
-# - fr3_joint4
-# - fr3_joint5
-# - fr3_joint6
-# - fr3_joint7
-# points:
-# - positions: [0.0, -0.5, 0.0, -1.5, 0.0, 1.0, 0.5]
-#   velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-#   accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-#   time_from_start:
-#     sec: 3
-#     nanosec: 0
-# "
+ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "
+joint_names:
+- fr3_joint1
+- fr3_joint2
+- fr3_joint3
+- fr3_joint4
+- fr3_joint5
+- fr3_joint6
+- fr3_joint7
+points:
+- positions: [0.0, -0.5, 0.0, -1.5, 0.0, 1.0, 0.5]
+  velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  time_from_start:
+    sec: 3
+    nanosec: 0
+"
 
 # Simple Demo
 # terminal 1
-#  ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=wlp15s0 docker compose up launch_franka
-# docker stop crisp_controllers_demos_launch_franka && docker rm crisp_controllers_demos_launch_franka
+ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=wlp130s0f0 docker compose up launch_franka
+docker stop crisp_controllers_demos_launch_franka && docker rm crisp_controllers_demos_launch_franka
 
 # # terminal 2
 # cd ~/crisp_py
