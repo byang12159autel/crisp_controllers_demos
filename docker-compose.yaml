@@ -168,16 +168,16 @@ services:
       ros2 launch crisp_controllers_robot_demos franka.launch.py
       arm_id:=fr3 use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false} robot_ip:=${ROBOT_IP:-172.16.0.2} use_rviz:=True"
 
-  # launch_dual_franka:
-  #   <<: *franka-overlay
-  #   command: >
-  #     bash -lc "source /opt/ros/humble/setup.bash &&
-  #     source install/setup.bash &&
-  #     export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
-  #     RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-  #     ros2 launch crisp_controllers_robot_demos dual_franka.launch.py
-  #     use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false}
-  #     left_robot_ip:=${LEFT_ROBOT_IP:-172.16.1.2} right_robot_ip:=${RIGHT_ROBOT_IP:-172.16.0.2}"
+  launch_dual_franka:
+    <<: *franka-overlay
+    command: >
+      bash -lc "source /opt/ros/humble/setup.bash &&
+      source install/setup.bash &&
+      export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
+      RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
+      ros2 launch crisp_controllers_robot_demos dual_franka.launch.py
+      use_fake_hardware:=${FRANKA_FAKE_HARDWARE:-false}
+      left_robot_ip:=${LEFT_ROBOT_IP:-172.16.1.2} right_robot_ip:=${RIGHT_ROBOT_IP:-172.16.0.2}"
 
   # launch_kinova:
   #   <<: *kinova-overlay
