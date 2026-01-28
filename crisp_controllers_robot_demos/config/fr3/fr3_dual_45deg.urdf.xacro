@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_fr3">
+
+  <xacro:include filename="$(find crisp_controllers_robot_demos)/config/fr3/fr3.urdf.xacro"/>
+
+  <!-- Should an end-effector be mounted at the flange?" -->
+  <xacro:arg name="hand" default="true" />
+
+  <!-- Which end-effector would be mounted at the flange?" -->
+  <xacro:arg name="ee_id" default="franka_hand" />
+
+  <!-- Should a fake hardware be used? -->
+  <xacro:arg name="use_fake_hardware" default="true" />
+
+  <!-- Should fake sensors be used? -->
+  <xacro:arg name="fake_sensor_commands" default="false" />
+
+  <xacro:arg name="robot_ip_left" default="172.16.1.2" />
+  <xacro:arg name="robot_ip_right" default="172.16.0.2" />
+
+  <xacro:fr3
+    arm_id="fr3"
+    robot_ip="$(arg robot_ip_left)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    hand="$(arg hand)"
+    arm_prefix="left"
+  />
+
+  <xacro:fr3
+    arm_id="fr3"
+    robot_ip="$(arg robot_ip_right)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    hand="$(arg hand)"
+    arm_prefix="right"
+  />
+
+
+  <!-- World link -->
+  <link name="world"/>
+
+  <!-- Base platform link with Duo Franka Base mesh -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://crisp_controllers_robot_demos/config/fr3/assets/body/Duo_Franka_Base.stl"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://crisp_controllers_robot_demos/config/fr3/assets/body/Duo_Franka_Base.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="10.0"/>
+      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Fix base platform to world -->
+  <joint name="world_to_base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Mount left arm on base platform -->
+  <!-- (approx -45 deg roll) -->
+  <joint name="left_base_to_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_base"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <!-- <origin xyz="0.056 0.119324 0.194376" rpy="-0.785398 0 0"/> -->
+  </joint>
+
+  <!-- Mount right arm on base platform -->
+  <!-- (approx +45 deg roll) -->
+  <joint name="right_base_to_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_base"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <!-- <origin xyz="0.056 -0.119324 0.194376" rpy="0.785398 0 0"/> -->
+  </joint>
+
+</robot>
