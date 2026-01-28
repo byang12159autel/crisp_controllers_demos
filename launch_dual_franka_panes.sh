@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# ======================================================================
+# Read User Input
+# ======================================================================
+USE_SIM=$1
+DISABLE_RVIZ=$2
+
+# ======================================================================
+# Configuration
+# ======================================================================
+
+# Detect network interface based on hostname
+# Find your device's network interface via "ip link show" for active network interface. 
+HOSTNAME=$(hostname)
+case "$HOSTNAME" in
+    "laptop1")
+        ROS_NETWORK_INTERFACE="wlo1"
+        ;;
+    "autel-ben-sim")
+        ROS_NETWORK_INTERFACE="wlp15s0"
+        ;;
+    "autel3")
+        # Legion laptop
+        ROS_NETWORK_INTERFACE="wlp130s0f0"
+        ;;
+    *)
+        echo "Warning: Unknown hostname"
+        echo "To configure your interface, add your hostname to this script's case statement"
+        ;;
+esac
+
+echo "Using network interface: $ROS_NETWORK_INTERFACE (hostname: $HOSTNAME)"
+
+ROBOT_IP="192.168.1.7"
+CONTAINER_NAME="crisp_controllers_demos_launch_franka"
+SESSION_NAME="franka_launch"
+ROS_DOMAIN_ID=100
+
+# ======================================================================
+# Cleanup
+# ======================================================================
+cleanup() {
+    echo "Cleaning up docker containers..."
+    docker compose down
+}
+
+# Set trap to cleanup on script exit
+trap cleanup EXIT INT TERM
+
+# Clean up any existing containers from previous runs
+docker compose down
+
+# Kill existing session if it exists
+tmux kill-session -t "$SESSION_NAME" 2>/dev/null
+
+# ======================================================================
+# Startup
+# ======================================================================
+
+# Create a new tmux session (detached)
+tmux new-session -d -s "$SESSION_NAME"
+
+# Split window vertically (side by side)
+tmux split-window -h -t "$SESSION_NAME"
+
+# Split the right pane horizontally (top and bottom)
+tmux split-window -v -t "$SESSION_NAME:0.1"
+
+# Enable logging for pane 0 (docker compose output)
+PANE0_LOG="/home/ben/crisp_framework/crisp_controllers_demos/pane0_$(date +%Y%m%d_%H%M%S).log"
+echo "Logging pane 0 output to: $PANE0_LOG"
+
+# Send command to left pane (pane 0)
+# Launch appropriate version based on USE_SIM
+if [ "$USE_SIM" = "sim" ]; then
+    # Sim Version
+    echo "Launching in SIMULATION mode..."
+    if [ "$DISABLE_RVIZ" = "no_rviz" ]; then
+        echo "Disabling RViz for dual franka launch..."
+        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 DUAL_FRANKA_USE_RVIZ=false FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka 2>&1 | tee -a $PANE0_LOG" C-m
+    else
+        tmux send-keys -t "$SESSION_NAME:0.0" "LEFT_ROBOT_IP=172.16.1.2 RIGHT_ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_dual_franka 2>&1 | tee -a $PANE0_LOG" C-m
+    fi
+
+else
+    # Hardware Version
+    echo "Launching in HARDWARE mode..."
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka 2>&1 | tee -a $PANE0_LOG" C-m
+fi
+
+# Send commands to top-right pane (pane 1) - with delay and ROS environment setup
+tmux send-keys -t "$SESSION_NAME:0.1" "echo 'Waiting for container to start...'" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "sleep 8" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "docker exec -it $CONTAINER_NAME bash" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "source /opt/ros/humble/setup.bash" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "source install/setup.bash" C-m
+# tmux send-keys -t "$SESSION_NAME:0.1" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
+tmux send-keys -t "$SESSION_NAME:0.1" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
+
+# Send commands to bottom-right pane (pane 2) - crisp_py environment
+tmux send-keys -t "$SESSION_NAME:0.2" "cd ~/crisp_py" C-m
+tmux send-keys -t "$SESSION_NAME:0.2" "pixi shell -e humble" C-m
+# tmux send-keys -t "$SESSION_NAME:0.2" "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" C-m
+tmux send-keys -t "$SESSION_NAME:0.2" "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" C-m
+tmux send-keys -t "$SESSION_NAME:0.2" "ros2 topic list" C-m
+
+# Attach to the session
+tmux attach-session -t "$SESSION_NAME"
+
+# ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "
+# joint_names:
+# - fr3_joint1
+# - fr3_joint2
+# - fr3_joint3
+# - fr3_joint4
+# - fr3_joint5
+# - fr3_joint6
+# - fr3_joint7
+# points:
+# - positions: [0.0, -0.5, 0.0, -1.5, 0.0, 1.0, 0.5]
+#   velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+#   accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+#   time_from_start:
+#     sec: 3
+#     nanosec: 0
+# "
+
+# Simple Demo
+# terminal 1
+#  ROBOT_IP=172.16.0.2 FRANKA_FAKE_HARDWARE=true RMW=cyclone ROS_NETWORK_INTERFACE=wlp15s0 docker compose up launch_franka
+# docker stop crisp_controllers_demos_launch_franka && docker rm crisp_controllers_demos_launch_franka
+
+# # terminal 2
+# cd ~/crisp_py
+# export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+# export ROS_DOMAIN_ID=100
+# ros2 daemon stop
+# ros2 daemon start
+# pixi shell -e humble
+# ros2 topic list
+
+# python examples/01_figure_eight.py
