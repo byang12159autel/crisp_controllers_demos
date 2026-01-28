@@ -20,6 +20,10 @@ case "$HOSTNAME" in
     "autel-ben-sim")
         ROS_NETWORK_INTERFACE="wlp15s0"
         ;;
+    "autel3")
+        # Legion laptop
+        ROS_NETWORK_INTERFACE="wlp130s0f0"
+        ;;
     *)
         echo "Warning: Unknown hostname"
         echo "To configure your interface, add your hostname to this script's case statement"
