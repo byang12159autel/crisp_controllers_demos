@@ -1,0 +1,7 @@
+# Request: effort (torque) commands per actuator
+float64[] effort_commands
+---
+# Response: state after one simulation step
+float64[] position
+float64[] velocity
+float64[] effort

@@ -8,6 +8,7 @@
          params="arm_id
              robot_ip
              use_fake_hardware
+             mujoco_model:='/home/ben/avant_robot_interface/assets/fr3/scene.xml'
              arm_prefix:=''
              hand:=true
              ee_id:='franka_hand'
@@ -42,6 +43,7 @@
   <xacro:franka_arm_ros2_control arm_id="fr3"
             robot_ip="${robot_ip}"
             use_fake_hardware="$(arg use_fake_hardware)"
+            mujoco_model="${mujoco_model}"
             arm_prefix="${arm_prefix}"/>
 
 

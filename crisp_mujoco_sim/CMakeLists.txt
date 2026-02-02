@@ -18,6 +18,7 @@ find_package(ament_cmake REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(crisp_mujoco_sim_msgs REQUIRED)
 
 set(MUJOCO_DIR "$ENV{HOME}/mujoco-$ENV{MUJOCO_VERSION}") # CI setting
 set(MUJOCO_INCLUDE_DIRS ${MUJOCO_DIR}/include)
@@ -57,6 +58,7 @@ ament_target_dependencies(${PROJECT_NAME}
         hardware_interface
         pluginlib
         rclcpp
+        crisp_mujoco_sim_msgs
 )
 
 target_link_libraries(${PROJECT_NAME}

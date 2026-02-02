@@ -1,16 +1,22 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <rclcpp/clock.hpp>
-#include <thread>
+#include <rclcpp/rclcpp.hpp>
+#include <string>
+#include <vector>
 
-#include "crisp_mujoco_sim/mujoco_simulator.h"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
+
+// Service message includes
+#include "crisp_mujoco_sim_msgs/srv/init.hpp"
+#include "crisp_mujoco_sim_msgs/srv/step.hpp"
 
 namespace crisp_mujoco_sim
 {
@@ -35,22 +41,23 @@ public:
   return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
   return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-  // Create a ROS clock instance
   rclcpp::Clock::SharedPtr clock;
 
 private:
-  // Command buffers for the controllers
   std::vector<double> m_effort_commands;
-
-  // State buffers for the controllers
   std::vector<double> m_positions;
   std::vector<double> m_velocities;
   std::vector<double> m_efforts;
 
-  // Run MuJoCo's solver in a separate thread
-  std::thread m_simulation;
+  // Commands sent to Python sim in the previous write(); used for next Step request
+  std::vector<double> m_stored_commands;
 
-  // Parameters
+  // Node and client for Python MuJoCo sim service (Step, Init)
+  rclcpp::Node::SharedPtr m_node;
+  rclcpp::Client<crisp_mujoco_sim_msgs::srv::Step>::SharedPtr m_step_client;
+  rclcpp::Client<crisp_mujoco_sim_msgs::srv::Init>::SharedPtr m_init_client;
+  rclcpp::Executor::SharedPtr m_executor;
+
   std::string m_mujoco_model;
 };
 

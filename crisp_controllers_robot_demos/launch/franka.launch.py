@@ -63,12 +63,7 @@ def robot_description_dependent_nodes_spawner(
             "use_fake_hardware": use_fake_hardware_str,
             "fake_sensor_commands": fake_sensor_commands_str,
             "arm_prefix": arm_prefix_str,
-            "mujoco_model": os.path.join(
-                get_package_share_directory("crisp_controllers_robot_demos"),
-                "config",
-                "fr3",
-                "scene.xml",
-            ),
+            "mujoco_model": "/home/ben/avant_robot_interface/assets/fr3/scene.xml",
         },
     ).toprettyxml(indent="  ")
 

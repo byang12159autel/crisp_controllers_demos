@@ -26,6 +26,9 @@
   <!-- Should fake sensors be used? -->
   <xacro:arg name="fake_sensor_commands" default="false" />
 
+  <!-- MuJoCo model path for simulation -->
+  <xacro:arg name="mujoco_model" default="/home/ben/avant_robot_interface/assets/fr3/scene.xml" />
+
   <!-- Should the robot be spawned in Gazebo?" -->
   <xacro:arg name="gazebo" default="false" />
 
@@ -44,6 +47,7 @@
     arm_id="fr3"
     robot_ip="$(arg robot_ip)"
     use_fake_hardware="$(arg use_fake_hardware)"
+    mujoco_model="$(arg mujoco_model)"
     arm_prefix="$(arg arm_prefix)"
     hand="$(arg load_gripper)"
   />

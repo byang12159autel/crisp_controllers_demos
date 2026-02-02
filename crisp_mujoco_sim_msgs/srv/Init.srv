@@ -1,0 +1,8 @@
+# Request: path to MuJoCo XML model
+string model_path
+---
+# Response: initial state (e.g. from keyframe)
+float64[] position
+float64[] velocity
+float64[] effort
+bool success

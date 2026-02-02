@@ -13,6 +13,7 @@ x-cameras-base: &cameras-base
     - $HOME/.Xauthority:/root/.Xauthority
     - /tmp/.X11-unix:/tmp/.X11-unix:rw
     - /dev:/dev
+    - /home/ben/avant_robot_interface/assets:/home/ben/avant_robot_interface/assets:ro
   device_cgroup_rules:
     - 'c 81:* rmw'
     - 'c 189:* rmw'
@@ -78,6 +79,7 @@ x-base: &base
     - $HOME/.Xauthority:/root/.Xauthority
     - /tmp/.X11-unix:/tmp/.X11-unix:rw
     - /dev:/dev
+    - /home/ben/avant_robot_interface/assets:/home/ben/avant_robot_interface/assets:ro
   device_cgroup_rules:
     - 'c 81:* rmw'
     - 'c 189:* rmw'
