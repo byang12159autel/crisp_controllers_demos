@@ -90,6 +90,7 @@ def robot_description_dependent_nodes_spawner(
         Node(
             package="controller_manager",
             executable="ros2_control_node",
+            prefix="taskset -c 3 chrt -f 90",  # Pin to CPU core 3 with FIFO RT priority 90
             parameters=[
                 franka_controllers,
                 {"robot_description": robot_description},
@@ -254,24 +255,24 @@ def generate_launch_description():
                 arguments=["gravity_compensation", "--inactive"],
                 output="screen",
             ),
-            # IncludeLaunchDescription(
-            #     PythonLaunchDescriptionSource(
-            #         [
-            #             PathJoinSubstitution(
-            #                 [
-            #                     FindPackageShare("franka_gripper"),
-            #                     "launch",
-            #                     "gripper.launch.py",
-            #                 ]
-            #             )
-            #         ]
-            #     ),
-            #     launch_arguments={
-            #         robot_ip_parameter_name: robot_ip,
-            #         use_fake_hardware_parameter_name: use_fake_hardware,
-            #     }.items(),
-            #     condition=IfCondition(load_gripper),
-            # ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    [
+                        PathJoinSubstitution(
+                            [
+                                FindPackageShare("franka_gripper"),
+                                "launch",
+                                "gripper.launch.py",
+                            ]
+                        )
+                    ]
+                ),
+                launch_arguments={
+                    robot_ip_parameter_name: robot_ip,
+                    use_fake_hardware_parameter_name: use_fake_hardware,
+                }.items(),
+                condition=IfCondition(load_gripper),
+            ),
             Node(
                 package="rviz2",
                 executable="rviz2",
