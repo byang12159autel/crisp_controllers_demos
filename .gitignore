@@ -1,2 +1,7 @@
 crisp_controllers
 .vscode/settings.json
+
+# Build artifacts
+log/
+build/
+install/
