@@ -34,7 +34,7 @@ esac
 
 echo "Using network interface: $ROS_NETWORK_INTERFACE (hostname: $HOSTNAME)"
 
-ROBOT_IP="192.168.1.7"
+ROBOT_IP="192.168.1.13"
 CONTAINER_NAME="crisp_controllers_demos_launch_franka"
 SESSION_NAME="franka_launch"
 ROS_DOMAIN_ID=100
@@ -79,7 +79,7 @@ if [ "$USE_SIM" = "sim" ]; then
 else
     # Hardware Version
     echo "Launching in HARDWARE mode..."
-    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false docker compose up launch_franka" C-m
+    tmux send-keys -t "$SESSION_NAME:0.0" "ROBOT_IP=$ROBOT_IP FRANKA_FAKE_HARDWARE=false RMW=cyclone ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE docker compose up launch_franka" C-m
 fi
 
 # Send commands to top-right pane (pane 1) - with delay and ROS environment setup
