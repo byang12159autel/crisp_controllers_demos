@@ -97,26 +97,7 @@ RUN git clone https://github.com/danielsanjosepro/franka_ros2.git src/franka_ros
     && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && touch src/franka_ros2/COLCON_IGNORE src/libfranka/COLCON_IGNORE src/franka_description/COLCON_IGNORE
 
-FROM base AS kinova
 
-# === KINOVA ===
-RUN git clone https://github.com/Kinovarobotics/ros2_kortex.git src/ros2_kortex \
-    && source /opt/ros/$ROS_DISTRO/setup.bash \
-    # We dont need this for now
-    # && vcs import src < src/ros2_kortex/ros2_kortex.${ROS_DISTRO}.repos --recursive --skip-existing \
-    # && rosdep install --ignore-src --from-paths src -y -r \
-    && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
-    && touch src/ros2_kortex/COLCON_IGNORE
-
-FROM base AS iiwa
-
-# === IIWA (lbr_fri_ros2_stack would also be an option) ===
-RUN git clone https://github.com/ICube-Robotics/iiwa_ros2.git src/iiwa_ros2 \
-    && source /opt/ros/$ROS_DISTRO/setup.bash \
-    && rosdep update \
-    && rosdep install --ignore-src --from-paths . -y -r \
-    && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install \
-    && touch src/iiwa_ros2/COLCON_IGNORE
 
 
 
@@ -137,37 +118,4 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && colcon build --symlink-install \
         --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --packages-select crisp_controllers crisp_mujoco_sim crisp_mujoco_sim_msgs crisp_controllers_robot_demos franka_force_feedback_controllers
 
-
-FROM kinova AS kinova-overlay
-
-ARG CRISP_CONTROLLERS_VERSION=1.1.0
-
-COPY . src/crisp_controllers_demos
-
-RUN git clone  --branch v${CRISP_CONTROLLERS_VERSION} --depth 1 https://github.com/utiasDSL/crisp_controllers.git src/crisp_controllers
-
-RUN source /opt/ros/$ROS_DISTRO/setup.bash \
-    && source /home/ros/ros2_ws/install/setup.bash \
-    && sudo apt update \
-    && rosdep update \
-    && rosdep install -q --from-paths src --ignore-src -y \ 
-    && colcon build --symlink-install \
-        --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --packages-select crisp_controllers crisp_mujoco_sim crisp_controllers_robot_demos
-
-
-FROM iiwa AS iiwa-overlay
-
-ARG CRISP_CONTROLLERS_VERSION=1.1.0
-
-COPY . src/crisp_controllers_demos
-
-RUN git clone  --branch v${CRISP_CONTROLLERS_VERSION} --depth 1 https://github.com/utiasDSL/crisp_controllers.git src/crisp_controllers
-
-RUN source /opt/ros/$ROS_DISTRO/setup.bash \
-    && source /home/ros/ros2_ws/install/setup.bash \
-    && sudo apt update \
-    && rosdep update \
-    && rosdep install -q --from-paths src --ignore-src -y \ 
-    && colcon build --symlink-install \
-        --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --packages-select crisp_controllers crisp_mujoco_sim crisp_controllers_robot_demos
 
