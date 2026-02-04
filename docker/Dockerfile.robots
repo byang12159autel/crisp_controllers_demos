@@ -83,20 +83,17 @@ WORKDIR /home/ros/ros2_ws
 
 FROM base AS franka
 
-# NOTE: it would be better to do separate builds for each repo but for testing this is enough
-# NOTE: There are still some bugs in the latest versions, for now using this commit
-# === FRANKA ROS2 ===
-RUN git clone https://github.com/danielsanjosepro/franka_ros2.git src/franka_ros2 \
+RUN git clone https://github.com/frankarobotics/franka_ros2.git src/franka_ros2 \
     && cd src/franka_ros2 \
+    && git checkout 7ef0ab00964a0d2b5e19e9292bbcef9f32dda811 \
     && cd /home/ros/ros2_ws \
     && source /opt/ros/humble/setup.bash \
     && sudo apt-get update \
-    && vcs import src < src/franka_ros2/franka.repos --recursive --skip-existing \
+    && vcs import src < src/franka_ros2/dependency.repos --recursive --skip-existing \
     && rosdep update \
     && rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y \
     && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && touch src/franka_ros2/COLCON_IGNORE src/libfranka/COLCON_IGNORE src/franka_description/COLCON_IGNORE
-
 
 
 

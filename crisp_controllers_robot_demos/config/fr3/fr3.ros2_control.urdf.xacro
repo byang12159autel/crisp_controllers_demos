@@ -19,6 +19,7 @@
 
     <ros2_control name="${arm_prefix_modified}FrankaHardwareInterface" type="system">
         <hardware>
+          <param name="version">0.1.0</param>
           <param name="arm_id">${arm_id}</param>
           <param name="prefix">${arm_prefix}</param>
 

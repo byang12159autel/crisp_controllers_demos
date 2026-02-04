@@ -270,6 +270,7 @@ def generate_launch_description():
                 launch_arguments={
                     robot_ip_parameter_name: robot_ip,
                     use_fake_hardware_parameter_name: use_fake_hardware,
+                    "namespace": "",  # Empty string means no namespace for gripper nodes
                 }.items(),
                 condition=IfCondition(load_gripper),
             ),
