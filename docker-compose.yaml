@@ -30,7 +30,7 @@ x-cameras-base: &cameras-base
     - CAMERA_NAME=camera
     - CAMERA_NAMESPACE=camera
     - ROS_NETWORK_INTERFACE=$ROS_NETWORK_INTERFACE
-    - SERIAL_NUMBER=$SERIAL_NUMBER
+    - CAMERA_SERIAL_NUMBER=$CAMERA_SERIAL_NUMBER
     - RMW=fastdds
 
 x-usb-cameras-base: &usb-cameras-base
@@ -54,8 +54,8 @@ x-realsense-cameras-overlay: &realsense-cameras-overlay
   command: >
     bash -c "source /opt/ros/humble/setup.bash &&
     RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-    echo 'Using the serial number: ${SERIAL_NUMBER}' &&
-    ros2 launch realsense2_camera rs_launch.py camera_name:=\${CAMERA_NAME:-camera} camera_namespace:=\${CAMERA_NAMESPACE:-camera} ${SERIAL_NUMBER:+serial_no:=_${SERIAL_NUMBER}}"
+    echo 'Using the serial number: ${CAMERA_SERIAL_NUMBER}' &&
+    ros2 launch realsense2_camera rs_launch.py camera_name:=\${CAMERA_NAME:-camera} camera_namespace:=\${CAMERA_NAMESPACE:-camera} ${CAMERA_SERIAL_NUMBER:+serial_no:=_${CAMERA_SERIAL_NUMBER}}"
 
 x-base: &base
   image: crisp_controllers_demos:base
@@ -173,7 +173,7 @@ services:
       bash -c "source /opt/ros/humble/setup.bash &&
       export ROS_NETWORK_INTERFACE=${ROS_NETWORK_INTERFACE:-lo} &&
       RMW=${RMW:-} source src/crisp_controllers_demos/scripts/setup_middleware.sh &&
-      ros2 launch realsense2_camera rs_launch.py camera_name:=\${CAMERA_NAME:-left_wrist_camera} camera_namespace:=\${CAMERA_NAMESPACE:-left} ${SERIAL_NUMBER:+serial:=_${SERIAL_NUMBER}}"
+      ros2 launch realsense2_camera rs_launch.py camera_name:=\${CAMERA_NAME:-left_wrist_camera} camera_namespace:=\${CAMERA_NAMESPACE:-left} ${CAMERA_SERIAL_NUMBER:+serial:=_${CAMERA_SERIAL_NUMBER}}"
 
   launch_realsense_camera_right:
     <<: *realsense-cameras-overlay
